@@ -1,8 +1,10 @@
 // Enemies our player must avoid
-var Enemy = function() {
+var Enemy = function(x,y,speed) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
-
+    this.x = x;
+    this.y = y;
+    this.speed = speed;
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
@@ -14,6 +16,14 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
+    this.x += this.speed * dt;
+
+    //reset position when moving out canvas
+    if (this.x > 550) {
+       this.x = -100;
+       this.speed = 100 + Math.floor(Math.random());
+   }
+
 };
 
 // Draw the enemy on the screen, required method for game
@@ -21,20 +31,62 @@ Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-// Now write your own player class
+// Now write your own player classs
 // This class requires an update(), render() and
 // a handleInput() method.
-var Player = function() {
+var Player = function(x,y) {
+  this.x = x;
+  this.y = y;
   this.sprite = 'images/char-boy.png';
 }
 
 // Now instantiate your objects.
-Player.prototype.update = function (){};
-Player.prototype.render = function (){};
+Player.prototype.update = function (){
+  //Dont allow player to move out of the area
+  if (this.y > 380) {
+      this.y = 380;
+  }
+  if (this.x > 400) {
+      this.x = 400;
+  }
+  if (this.x < 0) {
+      this.x = 0;
+  }
+
+  // Reset position,when the player wins
+  if (this.y < 0) {
+      this.x = 200;
+      this.y = 380;
+  }
+};
+
+Player.prototype.render = function (){
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+};
+
+Player.prototype.handleInput = function(keyPress) {
+  switch (keyPress) {
+       case 'left':
+           this.x -= 100;
+           break;
+       case 'up':
+           this.y -= 80;
+           break;
+       case 'right':
+           this.x += 100;
+           break;
+       case 'down':
+           this.y += 80;
+           break;
+   }
+};
+
 // Place all enemy objects in an array called allEnemies
 var allEnemies=[];
 // Place the player object in a variable called player
-var player = new Player();
+var player = new Player(200, 380);
+// Position "y" where the enemies will are created
+
 
 
 
