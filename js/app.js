@@ -1,3 +1,10 @@
+let winCount = 0;
+let failCount= 0;
+let winCountElement = document.querySelector(".winCount");
+winCountElement.textContent = winCount;
+let failCountElement = document.querySelector(".failCount");
+failCountElement.textContent = failCount;
+
 // Enemies our player must avoid
 var Enemy = function(x,y,speed) {
     // Variables applied to each of our instances go here,
@@ -21,9 +28,15 @@ Enemy.prototype.update = function(dt) {
     //reset position when moving out canvas
     if (this.x > 550) {
        this.x = -100;
-       this.speed = 100 + Math.floor(Math.random());
+       this.speed = 100 + Math.floor(Math.random()*600);
    }
 
+   // reset player position when collide with enemy-bug
+   if (player.x > (this.x - 50) && player.x < (this.x + 50) && player.y > (this.y - 50) && player.y < (this.y + 50)) {
+     player.x = 200;
+     player.y = 380;
+     failCountElement.textContent = failCount++;
+   }
 };
 
 // Draw the enemy on the screen, required method for game
@@ -43,20 +56,22 @@ var Player = function(x,y) {
 // Now instantiate your objects.
 Player.prototype.update = function (){
   //Dont allow player to move out of the area
-  if (this.y > 380) {
-      this.y = 380;
+  if (this.x < 0) {
+      this.x = 0;
   }
   if (this.x > 400) {
       this.x = 400;
   }
-  if (this.x < 0) {
-      this.x = 0;
+  if (this.y > 380) {
+      this.y = 380;
   }
+
 
   // Reset position,when the player wins
   if (this.y < 0) {
       this.x = 200;
       this.y = 380;
+      winCountElement.innerHTML = winCount++;
   }
 };
 
@@ -86,6 +101,15 @@ var allEnemies=[];
 // Place the player object in a variable called player
 var player = new Player(200, 380);
 // Position "y" where the enemies will are created
+var position = [60, 140, 220];
+var player = new Player(200, 380, 50);
+var enemy;
+
+position.forEach(function(y) {
+    let calculateSpeed = Math.floor(Math.random() * 700)
+    enemy = new Enemy(0, y, calculateSpeed);
+    allEnemies.push(enemy);
+});
 
 
 
